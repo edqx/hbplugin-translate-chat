@@ -1,36 +1,36 @@
 import fetch from "node-fetch";
 
-import { GameDataMessage, RpcMessage, SendChatMessage } from "@skeldjs/protocol";
-
 import {
-    ClientLanguage,
+    Language,
     Connection,
     EventListener,
     HindenburgPlugin,
     Plugin,
-    Room
+    Room,
+    PlayerSendChatEvent,
+    ReliablePacket,
+    GameDataMessage,
+    RpcMessage,
+    SendChatMessage
 } from "@skeldjs/hindenburg";
 
-import { PlayerSendChatEvent } from "@skeldjs/core";
-import { ReliablePacket } from "@skeldjs/protocol";
-
 const gameKeywordToLocale = {
-    [ClientLanguage.English]: "en",
-    [ClientLanguage.SpanishLatinAmerica]: "es",
-    [ClientLanguage.PortugueseBrazil]: "pt",
-    [ClientLanguage.Portuguese]: "pt",
-    [ClientLanguage.Korean]: "ko",
-    [ClientLanguage.Russian]: "ru",
-    [ClientLanguage.Dutch]: "de",
-    [ClientLanguage.Filipino]: "en",
-    [ClientLanguage.French]: "fr",
-    [ClientLanguage.German]: "de",
-    [ClientLanguage.Italian]: "it",
-    [ClientLanguage.Japanese]: "ja",
-    [ClientLanguage.Spanish]: "es",
-    [ClientLanguage.ChineseSimplified]: "zh",
-    [ClientLanguage.ChineseTraditional]: "zh",
-    [ClientLanguage.Irish]: "ga"
+    [Language.English]: "en",
+    [Language.SpanishAmericas]: "es",
+    [Language.PortugueseBrazil]: "pt",
+    [Language.Portuguese]: "pt",
+    [Language.Korean]: "ko",
+    [Language.Russian]: "ru",
+    [Language.Dutch]: "de",
+    [Language.Filipino]: "en",
+    [Language.French]: "fr",
+    [Language.German]: "de",
+    [Language.Italian]: "it",
+    [Language.Japanese]: "ja",
+    [Language.Spanish]: "es",
+    [Language.ChineseSimplified]: "zh",
+    [Language.ChineseTraditional]: "zh",
+    [Language.Irish]: "ga"
 };
 
 function generateHerpDerp(length: number) {
@@ -76,6 +76,8 @@ export default class extends Plugin {
             ? (gameKeywordToLocale as any)[playerConnection.language] || "en"
             : "en";
 
+        const libreTranslateService = this.config.translationService || "https://libretranslate.de";
+
         if (ev.message) {
             ev.message.cancel();
 
@@ -100,7 +102,7 @@ export default class extends Plugin {
                         this.logger.info("Attempting translate from %s->%s.",
                             sourceLocale, targetLocale);
 
-                        const res = await fetch("https://libretranslate.de/translate", {
+                        const res = await fetch(libreTranslateService + "/translate", {
                             method: "POST",
                             body: JSON.stringify({
                                 q: ev.chatMessage,

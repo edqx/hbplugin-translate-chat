@@ -24,11 +24,15 @@ plugin directory. (Remember to install & build the plugin in the directory.)
 ## Configuration
 Add `"herpderp": true` to your configuration to make it.. herp derp.
 
+Add `"translationService": "<address>"` to change the hostname for the libre
+translate service. Useful if you decide to self-host libre translate. 
+
 ```json
 {
     "plugins": {
         "hbplugin-translate-chat": {
-            "herpderp": true
+            "herpderp": true,
+            "translationService": "https://translate.mentality.rip"
         }
     }
 }
